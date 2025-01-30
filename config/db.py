@@ -1,7 +1,11 @@
-from sqlalchemy import create_engine, MetaData
+import motor.motor_asyncio
+from typing_extensions import Annotated
+from pydantic.functional_validators import BeforeValidator
+import certifi
+from config.config import settings
 
-engine = create_engine("mysql+pymysql://root:password@localhost:3306/storedb")
+client = motor.motor_asyncio.AsyncIOMotorClient(settings.url_db, tlsCAFile=certifi.where())
 
-meta = MetaData()
+db = client[settings.name_db]
 
-conn = engine.connect()
+PyObjectId = Annotated[str, BeforeValidator(str)]
